@@ -6,13 +6,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Navigate to the Categories screen
             Navigator.pushNamed(context, '/categories');
           },
           child: const Text('Login'),

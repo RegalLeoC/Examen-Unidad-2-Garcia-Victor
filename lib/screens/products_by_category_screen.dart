@@ -1,31 +1,41 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/product.dart';
 
 class ProductsByCategoryScreen extends StatelessWidget {
-  const ProductsByCategoryScreen({Key? key}) : super(key: key);
+  final String category;
+
+  const ProductsByCategoryScreen({Key? key, required this.category}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products by Category'),
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: const Text('Product 1'),
-            onTap: () {
-              // Navigate to Product Detail screen with a sample product ID
-              Navigator.pushNamed(context, '/productDetail', arguments: 1);
+      appBar: AppBar(title: Text('Products in $category')),
+      body: FutureBuilder<List<Product>>(
+        future: ApiService().fetchProductsByCategory(category),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final products = snapshot.data ?? [];
+          return ListView.builder(
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return ListTile(
+                leading: Image.network(product.thumbnail, width: 50, height: 50, fit: BoxFit.cover),
+                title: Text(product.title),
+                subtitle: Text('\$${product.price}'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/productDetail', arguments: product.id);
+                },
+              );
             },
-          ),
-          ListTile(
-            title: const Text('Product 2'),
-            onTap: () {
-              Navigator.pushNamed(context, '/productDetail', arguments: 2);
-            },
-          ),
-          // Add more products here as needed
-        ],
+          );
+        },
       ),
     );
   }
