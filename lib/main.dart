@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'routes/routes.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Optativa 2 Flutter App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme,
       onGenerateRoute: Routes.generateRoute,
       initialRoute: '/',
     );

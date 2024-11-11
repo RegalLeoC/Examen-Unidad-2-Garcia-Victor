@@ -19,14 +19,12 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const CategoriesScreen());
 
       case productsByCategory:
-        // Expecting a String argument for category name
         final category = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => ProductsByCategoryScreen(category: category),
         );
 
       case productDetail:
-        // Expecting an int argument for product ID
         final productId = settings.arguments as int;
         return MaterialPageRoute(
           builder: (_) => ProductDetailScreen(productId: productId),

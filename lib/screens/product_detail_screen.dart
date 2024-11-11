@@ -1,6 +1,8 @@
+// lib/screens/product_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
+import '../widgets/custom_button.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final int productId;
@@ -10,7 +12,7 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Detail')),
+      appBar: AppBar(title: const Text('Detalle de producto')),
       body: FutureBuilder<Product>(
         future: ApiService().fetchProductDetail(productId),
         builder: (context, snapshot) {
@@ -22,29 +24,58 @@ class ProductDetailScreen extends StatelessWidget {
 
           final product = snapshot.data!;
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.network(product.thumbnail, width: double.infinity, height: 200, fit: BoxFit.cover),
-                const SizedBox(height: 16.0),
-                Text(product.title, style: Theme.of(context).textTheme.headlineSmall),
-                Text('\$${product.price}', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.green, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16.0),
-                Text(product.description),
-                const SizedBox(height: 8.0),
+                Image.network(
+                  product.thumbnail,
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.image, size: 100, color: Colors.grey),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  product.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    product.description,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.star, color: Colors.amber),
-                    Text('${product.rating}', style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      'Precio \$${product.price}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Stock ${product.stock}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
+                const Spacer(),
+                CustomButton(
                   onPressed: () {
-                    // Buy button functionality
+                    // Add functionality for adding to cart
                   },
-                  child: const Text('Buy Now'),
+                  text: 'Agregar',
+                  backgroundColor: Colors.blue,
+                  icon: Icons.add_shopping_cart,
                 ),
               ],
             ),
