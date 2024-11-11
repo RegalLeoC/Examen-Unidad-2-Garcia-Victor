@@ -28,4 +28,16 @@ class Product {
       stock: json['stock'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'thumbnail': thumbnail,
+      'rating': rating,
+      'stock': stock,
+    };
+  }
 }

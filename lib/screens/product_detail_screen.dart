@@ -1,20 +1,55 @@
-// lib/screens/product_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
+import '../helpers/cart_helper.dart';
 import '../widgets/custom_button.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final int productId;
 
   const ProductDetailScreen({Key? key, required this.productId}) : super(key: key);
+
+  @override
+  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  final TextEditingController _quantityController = TextEditingController();
+  late Future<Product> _productFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productFuture = ApiService().fetchProductDetail(widget.productId);
+  }
+
+  Future<void> _addToCart(Product product) async {
+    try {
+      if (_quantityController.text.isEmpty || int.tryParse(_quantityController.text) == null) {
+        throw Exception("Please enter a valid quantity.");
+      }
+      int quantity = int.parse(_quantityController.text);
+      if (quantity <= 0) {
+        throw Exception("Quantity must be greater than zero.");
+      }
+
+      await CartHelper.addToCart(product, quantity);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Product added to cart")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Detalle de producto')),
       body: FutureBuilder<Product>(
-        future: ApiService().fetchProductDetail(productId),
+        future: _productFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -34,7 +69,7 @@ class ProductDetailScreen extends StatelessWidget {
                   height: 150,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.image, size: 100, color: Colors.grey),
+                      const Icon(Icons.image, size: 100, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -59,20 +94,24 @@ class ProductDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Precio \$${product.price}',
+                      'Precio: \$${product.price}',
                       style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      'Stock ${product.stock}',
+                      'Stock: ${product.stock}',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _quantityController,
+                  decoration: const InputDecoration(labelText: "Cantidad"),
+                  keyboardType: TextInputType.number,
+                ),
                 const Spacer(),
                 CustomButton(
-                  onPressed: () {
-                    // Add functionality for adding to cart
-                  },
+                  onPressed: () => _addToCart(product),
                   text: 'Agregar',
                   backgroundColor: Colors.blue,
                   icon: Icons.add_shopping_cart,
