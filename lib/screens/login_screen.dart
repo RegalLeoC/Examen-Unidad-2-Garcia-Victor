@@ -1,3 +1,4 @@
+// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import '../helpers/auth_helper.dart';
 
@@ -19,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthHelper.login(username, password);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login successful")),
+        const SnackBar(content: Text("Login successful")),
       );
 
       // Navigate to the main screen or another screen after successful login
@@ -34,23 +35,69 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Display Image
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.purple[100],
+              ),
+              child: Image.network(
+                'https://cdn1.iconfinder.com/data/icons/daily-life-1/32/loading-512.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Username TextField
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: "Username"),
+              decoration: InputDecoration(
+                labelText: 'Usuario',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ),
+            const SizedBox(height: 16),
+            // Password TextField
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: "Password"),
               obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: _handleLogin,
-              child: Text("Login"),
+            const SizedBox(height: 32),
+            // Centered Login Button with one-third width
+            Center(
+              child: FractionallySizedBox(
+                widthFactor: 1 / 3,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: _handleLogin,
+                  child: const Text(
+                    'Ingresar',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

@@ -26,7 +26,7 @@ class CartHelper {
       cart[existingProductIndex]['quantity'] = newQuantity;
       cart[existingProductIndex]['total'] = newQuantity * product.price;
     } else {
-      // Add new product if within cart limit
+      
       if (cart.length >= 7) {
         throw Exception("You can only add up to 7 unique products.");
       }
