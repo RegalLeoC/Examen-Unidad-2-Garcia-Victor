@@ -116,6 +116,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   backgroundColor: Colors.blue,
                   icon: Icons.add_shopping_cart,
                 ),
+                const SizedBox(height: 16),
+                // New button to navigate to the cart screen
+                CustomButton(
+                  onPressed: () => Navigator.pushNamed(context, '/cart'),
+                  text: 'Ir al carrito',
+                  backgroundColor: Colors.green,
+                  icon: Icons.shopping_cart,
+                ),
               ],
             ),
           );

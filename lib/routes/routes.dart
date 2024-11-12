@@ -3,17 +3,22 @@ import '../screens/login_screen.dart';
 import '../screens/categories_screen.dart';
 import '../screens/products_by_category_screen.dart';
 import '../screens/product_detail_screen.dart';
+import '../screens/cart_screen.dart';
 
 class Routes {
   static const String login = '/';
   static const String categories = '/categories';
   static const String productsByCategory = '/productsByCategory';
   static const String productDetail = '/productDetail';
+  static const String cart = '/cart';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
         return MaterialPageRoute(builder: (_) => LoginScreen());
+
+      case cart:
+        return MaterialPageRoute(builder: (_) => CartScreen());
 
       case categories:
         return MaterialPageRoute(builder: (_) => const CategoriesScreen());

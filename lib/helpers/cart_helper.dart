@@ -1,84 +1,58 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
-import 'dart:async';
-
-const int MAX_CART_ITEMS = 7;
 
 class CartHelper {
+  static const String cartKey = 'cart';
+
   static Future<void> addToCart(Product product, int quantity) async {
     final prefs = await SharedPreferences.getInstance();
+    final cart = await getCart();
 
-    if (quantity <= 0) {
-      throw Exception("Quantity must be greater than zero.");
-    }
+    final existingProduct = cart.firstWhere(
+      (item) => item['id'] == product.id,
+      orElse: () => {},
+    );
 
-    if (quantity > product.stock) {
-      throw Exception("Quantity exceeds available stock.");
-    }
-
-    final cartData = prefs.getString('cart') ?? '[]';
-    List<dynamic> cart = jsonDecode(cartData);
-
-    final existingIndex = cart.indexWhere((item) => item['id'] == product.id);
-
-    if (existingIndex != -1) {
-      cart[existingIndex]['quantity'] += quantity;
-      cart[existingIndex]['total'] = cart[existingIndex]['quantity'] * product.price;
+    if (existingProduct.isNotEmpty) {
+      existingProduct['quantity'] += quantity;
+      existingProduct['total'] = existingProduct['quantity'] * product.price;
     } else {
-      if (cart.length >= MAX_CART_ITEMS) {
-        throw Exception("Cart cannot hold more than $MAX_CART_ITEMS unique items.");
+      if (cart.length < 7) {
+        cart.add({
+          'id': product.id,
+          'name': product.title,
+          'quantity': quantity,
+          'price': product.price,
+          'total': quantity * product.price,
+          'thumbnail': product.thumbnail,
+        });
+      } else {
+        throw Exception("You can only add up to 7 unique products.");
       }
-      cart.add({
-        'id': product.id,
-        'name': product.title,
-        'price': product.price,
-        'quantity': quantity,
-        'total': quantity * product.price,
-        'date': DateTime.now().toIso8601String(),
-        'thumbnail': product.thumbnail,
-      });
     }
 
-    prefs.setString('cart', jsonEncode(cart));
+    await prefs.setString(cartKey, jsonEncode(cart));
+  }
+
+  static Future<List<Map<String, dynamic>>> getCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartString = prefs.getString(cartKey);
+    if (cartString != null) {
+      return List<Map<String, dynamic>>.from(jsonDecode(cartString));
+    }
+    return [];
   }
 
   static Future<void> removeFromCart(int productId) async {
     final prefs = await SharedPreferences.getInstance();
-    final cartData = prefs.getString('cart') ?? '[]';
-    List<dynamic> cart = jsonDecode(cartData);
-
+    final cart = await getCart();
     cart.removeWhere((item) => item['id'] == productId);
-
-    prefs.setString('cart', jsonEncode(cart));
-  }
-
-  static Future<void> updateItemQuantity(int productId, int newQuantity) async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartData = prefs.getString('cart') ?? '[]';
-    List<dynamic> cart = jsonDecode(cartData);
-
-    final index = cart.indexWhere((item) => item['id'] == productId);
-    if (index != -1) {
-      cart[index]['quantity'] = newQuantity;
-      cart[index]['total'] = cart[index]['price'] * newQuantity;
-      prefs.setString('cart', jsonEncode(cart));
-    }
-  }
-
-  static Future<void> clearCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('cart');
-  }
-
-  static Future<List<dynamic>> getCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartData = prefs.getString('cart') ?? '[]';
-    return jsonDecode(cartData);
+    await prefs.setString(cartKey, jsonEncode(cart));
   }
 
   static Future<double> getTotalCartValue() async {
     final cart = await getCart();
-    return cart.fold<double>(0.0, (total, item) => total + item['total']);
+    return cart.fold<double>(0.0, (total, item) => total + (item['total'] as double));
   }
 }
