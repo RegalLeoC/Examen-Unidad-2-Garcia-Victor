@@ -23,7 +23,7 @@ class CategoriesScreen extends StatelessWidget {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final category = categories[index];
-              final isEvenIndex = index % 2 == 0; // Check if index is even
+              final isEvenIndex = index % 2 == 0; 
               return CategoryTile(
                 categoryName: category.slug,
                 isBlueTheme: isEvenIndex,
@@ -39,7 +39,7 @@ class CategoriesScreen extends StatelessWidget {
   }
 }
 
-// Custom widget for category tiles with alternating themes
+
 class CategoryTile extends StatelessWidget {
   final String categoryName;
   final bool isBlueTheme;

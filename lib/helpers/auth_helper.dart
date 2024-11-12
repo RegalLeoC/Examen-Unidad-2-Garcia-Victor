@@ -20,10 +20,10 @@ class AuthHelper {
       final access = Access.fromJson({
         'username': data['username'],
         'email': data['email'],
-        'accessToken': data['acessToken'],  // Assuming the token is labeled as 'token'
+        'accessToken': data['acessToken'],
       });
 
-      // Store the accessToken in SharedPreferences
+     
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', access.accessToken);
 

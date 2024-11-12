@@ -1,4 +1,3 @@
-// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import '../helpers/auth_helper.dart';
 
@@ -23,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text("Login successful")),
       );
 
-      // Navigate to the main screen or another screen after successful login
       Navigator.pushReplacementNamed(context, '/categories');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            // Centered Login Button with one-third width
+
             Center(
               child: FractionallySizedBox(
                 widthFactor: 1 / 3,

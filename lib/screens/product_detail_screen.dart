@@ -3,8 +3,9 @@ import '../services/api_service.dart';
 import '../models/product.dart';
 import '../helpers/cart_helper.dart';
 import '../widgets/custom_button.dart';
+import '../base_auth_screen.dart';
 
-class ProductDetailScreen extends StatefulWidget {
+class ProductDetailScreen extends BaseAuthScreen {
   final int productId;
 
   const ProductDetailScreen({Key? key, required this.productId}) : super(key: key);
@@ -13,7 +14,7 @@ class ProductDetailScreen extends StatefulWidget {
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _ProductDetailScreenState extends BaseAuthScreenState<ProductDetailScreen> {
   final TextEditingController _quantityController = TextEditingController();
   late Future<Product> _productFuture;
 
@@ -74,10 +75,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 const SizedBox(height: 16),
                 Text(
                   product.title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -93,14 +91,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Precio: \$${product.price}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      'Stock: ${product.stock}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    Text('Precio: \$${product.price}', style: const TextStyle(fontSize: 16)),
+                    Text('Stock: ${product.stock}', style: const TextStyle(fontSize: 16)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -117,7 +109,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   icon: Icons.add_shopping_cart,
                 ),
                 const SizedBox(height: 16),
-                // New button to navigate to the cart screen
                 CustomButton(
                   onPressed: () => Navigator.pushNamed(context, '/cart'),
                   text: 'Ir al carrito',

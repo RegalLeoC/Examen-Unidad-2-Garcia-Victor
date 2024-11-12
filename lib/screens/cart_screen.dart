@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../helpers/cart_helper.dart';
+import '../base_auth_screen.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends BaseAuthScreen {
   const CartScreen({Key? key}) : super(key: key);
 
   @override
   _CartScreenState createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreenState extends BaseAuthScreenState<CartScreen> {
   Future<void> _loadCart() async {
     await CartHelper.getCart();
-    setState(() {}); // Refresh the screen to show updated cart
+    setState(() {});
   }
 
   @override
@@ -54,7 +55,7 @@ class _CartScreenState extends State<CartScreen> {
                   icon: const Icon(Icons.delete),
                   onPressed: () async {
                     await CartHelper.removeFromCart(item['id']);
-                    _loadCart(); // Refresh the cart view
+                    _loadCart();
                   },
                 ),
                 onTap: () {

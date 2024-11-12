@@ -15,7 +15,7 @@ class CartHelper {
         : {};
 
     if (existingProduct.isNotEmpty) {
-      // Update existing product quantity within stock limits
+
       int currentQuantity = existingProduct['quantity'] ?? 0;
       int newQuantity = currentQuantity + quantity;
 
