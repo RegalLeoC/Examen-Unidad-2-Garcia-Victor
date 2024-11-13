@@ -1,22 +1,27 @@
-// lib/screens/products_by_category_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/product_card.dart';
 import '../routes/routes.dart';
+import '../base_auth_screen.dart';
 
-class ProductsByCategoryScreen extends StatelessWidget {
+class ProductsByCategoryScreen extends BaseAuthScreen {
   final String category;
 
   const ProductsByCategoryScreen({Key? key, required this.category}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  _ProductsByCategoryScreenState createState() => _ProductsByCategoryScreenState();
+}
+
+class _ProductsByCategoryScreenState extends BaseAuthScreenState<ProductsByCategoryScreen> {
+  @override
+    Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Products in $category'),
+      appBar: CustomAppBar(title: 'Products in ${widget.category}'),
       body: FutureBuilder<List<Product>>(
-        future: ApiService().fetchProductsByCategory(category),
+        future: ApiService().fetchProductsByCategory(widget.category),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

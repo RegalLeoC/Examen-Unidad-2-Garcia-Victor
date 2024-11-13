@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/category.dart';
+import '../base_auth_screen.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends BaseAuthScreen {
   const CategoriesScreen({Key? key}) : super(key: key);
 
+  @override
+  _CategoriesScreenState createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends BaseAuthScreenState<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +29,7 @@ class CategoriesScreen extends StatelessWidget {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final category = categories[index];
-              final isEvenIndex = index % 2 == 0; 
+              final isEvenIndex = index % 2 == 0;
               return CategoryTile(
                 categoryName: category.slug,
                 isBlueTheme: isEvenIndex,
@@ -39,7 +45,6 @@ class CategoriesScreen extends StatelessWidget {
   }
 }
 
-
 class CategoryTile extends StatelessWidget {
   final String categoryName;
   final bool isBlueTheme;
@@ -51,8 +56,8 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(
-        isBlueTheme ? Icons.shopping_bag : Icons.fastfood, // Alternate icon
-        color: isBlueTheme ? Colors.blue : Colors.red, // Alternate color
+        isBlueTheme ? Icons.shopping_bag : Icons.fastfood,
+        color: isBlueTheme ? Colors.blue : Colors.red,
       ),
       title: Text(
         categoryName,
@@ -60,7 +65,7 @@ class CategoryTile extends StatelessWidget {
       ),
       trailing: Icon(
         Icons.arrow_forward_ios,
-        color: isBlueTheme ? Colors.blue : Colors.red, // Alternate arrow color
+        color: isBlueTheme ? Colors.blue : Colors.red,
       ),
       onTap: onTap,
     );
