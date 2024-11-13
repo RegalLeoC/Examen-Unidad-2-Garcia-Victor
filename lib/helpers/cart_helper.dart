@@ -72,4 +72,25 @@ class CartHelper {
     final cart = await getCart();
     return cart.fold<double>(0.0, (total, item) => total + (item['total'] as double));
   }
+
+
+   // Check if the product has reached its stock limit in the cart
+  static Future<bool> isProductAtStockLimit(Product product) async {
+  final cart = await getCart();
+  final existingProduct = cart.firstWhere((item) => item['id'] == product.id, orElse: () => {});
+  
+  int currentQuantity = existingProduct['quantity'] ?? 0;
+  return currentQuantity >= product.stock;
+  }
+
+  // Check if the cart has reached the maximum unique items limit
+  static Future<bool> isCartAtLimit() async {
+    final cart = await getCart();
+    return cart.length >= 7;
+  }
+
+  // Check if the product is considered "agotado" (out of stock in cart or cart limit reached)
+  static Future<bool> isProductOutOfStock(Product product) async {
+    return await isProductAtStockLimit(product) || await isCartAtLimit();
+  }
 }
