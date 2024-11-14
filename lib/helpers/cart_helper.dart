@@ -4,6 +4,7 @@ import '../models/product.dart';
 
 class CartHelper {
   static const String cartKey = 'cart';
+  static const String purchasesKey = 'purchases';
 
   static Future<void> addToCart(Product product, int quantity) async {
     final prefs = await SharedPreferences.getInstance();
@@ -74,7 +75,6 @@ class CartHelper {
   }
 
 
-   // Check if the product has reached its stock limit in the cart
   static Future<bool> isProductAtStockLimit(Product product) async {
   final cart = await getCart();
   final existingProduct = cart.firstWhere((item) => item['id'] == product.id, orElse: () => {});
@@ -83,14 +83,43 @@ class CartHelper {
   return currentQuantity >= product.stock;
   }
 
-  // Check if the cart has reached the maximum unique items limit
   static Future<bool> isCartAtLimit() async {
     final cart = await getCart();
     return cart.length >= 7;
   }
 
-  // Check if the product is considered "agotado" (out of stock in cart or cart limit reached)
   static Future<bool> isProductOutOfStock(Product product) async {
     return await isProductAtStockLimit(product) || await isCartAtLimit();
   }
+
+  static Future<void> finalizePurchase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cart = await getCart();
+    final double total = await getTotalCartValue();
+    final int totalItems = cart.fold<int>(0, (sum, item) => sum + (item['quantity'] as int));
+
+    // Save purchase
+    final List<Map<String, dynamic>> purchases = await getPurchases();
+    purchases.add({
+      'date': DateTime.now().toIso8601String(),
+      'total': total,
+      'totalItems': totalItems,
+      'products': cart,
+    });
+
+    await prefs.setString(purchasesKey, jsonEncode(purchases));
+
+    // Vacia carrito despues de compra
+    await prefs.setString(cartKey, jsonEncode([]));
+  }
+
+  static Future<List<Map<String, dynamic>>> getPurchases() async {
+    final prefs = await SharedPreferences.getInstance();
+    final purchasesString = prefs.getString(purchasesKey);
+    if (purchasesString != null) {
+      return List<Map<String, dynamic>>.from(jsonDecode(purchasesString));
+    }
+    return [];
+  }
+
 }
