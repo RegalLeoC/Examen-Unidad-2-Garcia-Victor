@@ -15,6 +15,14 @@ class _CartScreenState extends BaseAuthScreenState<CartScreen> {
     setState(() {});
   }
 
+  Future<void> _finalizePurchase() async {
+    await CartHelper.finalizePurchase();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Compra finalizada con éxito")),
+    );
+    Navigator.pushNamed(context, '/comprasRealizadas');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,26 +51,39 @@ class _CartScreenState extends BaseAuthScreenState<CartScreen> {
             return const Center(child: Text('Your cart is empty'));
           }
 
-          return ListView.builder(
-            itemCount: cart.length,
-            itemBuilder: (context, index) {
-              final item = cart[index];
-              return ListTile(
-                leading: Image.network(item['thumbnail'], width: 50, height: 50),
-                title: Text(item['name']),
-                subtitle: Text('Cantidad: ${item['quantity']} | Total: \$${item['total'].toStringAsFixed(2)}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await CartHelper.removeFromCart(item['id']);
-                    _loadCart();
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cart.length,
+                  itemBuilder: (context, index) {
+                    final item = cart[index];
+                    return ListTile(
+                      leading: Image.network(item['thumbnail'], width: 50, height: 50),
+                      title: Text(item['name']),
+                      subtitle: Text('Cantidad: ${item['quantity']} | Total: \$${item['total'].toStringAsFixed(2)}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          await CartHelper.removeFromCart(item['id']);
+                          _loadCart();
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/productDetail', arguments: item['id']);
+                      },
+                    );
                   },
                 ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/productDetail', arguments: item['id']);
-                },
-              );
-            },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: _finalizePurchase,
+                  child: const Text('Finalizar Compra'),
+                ),
+              ),
+            ],
           );
         },
       ),

@@ -17,11 +17,26 @@ class ProductDetailScreen extends BaseAuthScreen {
 class _ProductDetailScreenState extends BaseAuthScreenState<ProductDetailScreen> {
   final TextEditingController _quantityController = TextEditingController();
   late Future<Product> _productFuture;
+  bool showAddButton = true;
 
   @override
   void initState() {
     super.initState();
     _productFuture = ApiService().fetchProductDetail(widget.productId);
+
+    // Initial check for button visibility when the screen loads
+    _checkButtonVisibility();
+  }
+
+  Future<void> _checkButtonVisibility() async {
+    // Fetch product data to verify cart and stock limits
+    final product = await _productFuture;
+    bool atStockLimit = await CartHelper.isProductAtStockLimit(product);
+    bool atCartLimit = await CartHelper.isCartAtLimit();
+
+    setState(() {
+      showAddButton = !(atStockLimit || atCartLimit);
+    });
   }
 
   Future<void> _addToCart(Product product) async {
@@ -35,6 +50,10 @@ class _ProductDetailScreenState extends BaseAuthScreenState<ProductDetailScreen>
       }
 
       await CartHelper.addToCart(product, quantity);
+
+      // Re-check stock and cart limits after adding to cart
+      _checkButtonVisibility();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Product added to cart")),
       );
@@ -59,6 +78,7 @@ class _ProductDetailScreenState extends BaseAuthScreenState<ProductDetailScreen>
           }
 
           final product = snapshot.data!;
+
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -102,13 +122,18 @@ class _ProductDetailScreenState extends BaseAuthScreenState<ProductDetailScreen>
                   keyboardType: TextInputType.number,
                 ),
                 const Spacer(),
-                CustomButton(
-                  onPressed: () => _addToCart(product),
-                  text: 'Agregar',
-                  backgroundColor: Colors.blue,
-                  icon: Icons.add_shopping_cart,
-                ),
+
+                if (!showAddButton)
+                  const Text("Producto agotado"),
+                if (showAddButton)
+                  CustomButton(
+                    onPressed: () => _addToCart(product),
+                    text: 'Agregar',
+                    backgroundColor: Colors.blue,
+                    icon: Icons.add_shopping_cart,
+                  ),
                 const SizedBox(height: 16),
+
                 CustomButton(
                   onPressed: () => Navigator.pushNamed(context, '/cart'),
                   text: 'Ir al carrito',

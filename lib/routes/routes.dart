@@ -4,6 +4,7 @@ import '../screens/categories_screen.dart';
 import '../screens/products_by_category_screen.dart';
 import '../screens/product_detail_screen.dart';
 import '../screens/cart_screen.dart';
+import '../screens/compras_realizadas_screen.dart';
 
 class Routes {
   static const String login = '/';
@@ -11,6 +12,7 @@ class Routes {
   static const String productsByCategory = '/productsByCategory';
   static const String productDetail = '/productDetail';
   static const String cart = '/cart';
+  static const String comprasRealizadas = '/comprasRealizadas';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -34,6 +36,9 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => ProductDetailScreen(productId: productId),
         );
+
+      case comprasRealizadas:
+        return MaterialPageRoute(builder: (_) => ComprasRealizadasScreen());
 
       default:
         return MaterialPageRoute(
