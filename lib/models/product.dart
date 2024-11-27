@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Product {
   final int id;
   final String title;
@@ -39,5 +41,15 @@ class Product {
       'rating': rating,
       'stock': stock,
     };
+  }
+
+  /// Decodes a JSON string of recently viewed products into a list of maps.
+  static List<Map<String, dynamic>> decodeRecentlyViewed(String jsonString) {
+    return List<Map<String, dynamic>>.from(jsonDecode(jsonString));
+  }
+
+  /// Encodes a list of maps of recently viewed products into a JSON string.
+  static String encodeRecentlyViewed(List<Map<String, dynamic>> products) {
+    return jsonEncode(products);
   }
 }

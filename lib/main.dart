@@ -15,10 +15,12 @@ class MyApp extends StatelessWidget {
       title: 'Optativa 2 Flutter App',
       theme: AppTheme.lightTheme,
       onGenerateRoute: Routes.generateRoute,
-      initialRoute: '/',
+      initialRoute: Routes.navigationBar,
+      
     );
   }
 }
+
 
 
 class MyHomePage extends StatefulWidget {
