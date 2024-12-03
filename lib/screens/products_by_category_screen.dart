@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
 import '../widgets/custom_app_bar.dart';
@@ -24,7 +25,6 @@ class _ProductsByCategoryScreenState extends BaseAuthScreenState<ProductsByCateg
       _selectedIndex = index;
     });
 
-    // Navigate to the corresponding screen
     switch (index) {
       case 0:
         Navigator.pushReplacementNamed(context, '/search');
@@ -39,6 +39,29 @@ class _ProductsByCategoryScreenState extends BaseAuthScreenState<ProductsByCateg
         Navigator.pushReplacementNamed(context, '/userProfile');
         break;
     }
+  }
+
+  Future<void> _saveRecentlyViewed(Product product) async {
+    final prefs = await SharedPreferences.getInstance();
+    final recentlyViewedString = prefs.getString('recentlyViewed');
+    List<Map<String, dynamic>> recentlyViewed = recentlyViewedString != null
+        ? Product.decodeRecentlyViewed(recentlyViewedString)
+        : [];
+
+    final existingIndex = recentlyViewed.indexWhere((item) => item['id'] == product.id);
+    if (existingIndex != -1) {
+      recentlyViewed[existingIndex]['views'] = (recentlyViewed[existingIndex]['views'] ?? 0) + 1;
+    } else {
+      recentlyViewed.add({
+        'id': product.id,
+        'title': product.title,
+        'price': product.price,
+        'thumbnail': product.thumbnail,
+        'views': 1,
+      });
+    }
+
+    await prefs.setString('recentlyViewed', Product.encodeRecentlyViewed(recentlyViewed));
   }
 
   @override
@@ -69,7 +92,8 @@ class _ProductsByCategoryScreenState extends BaseAuthScreenState<ProductsByCateg
                 final product = products[index];
                 return ProductCard(
                   product: product,
-                  onTap: () {
+                  onTap: () async {
+                    await _saveRecentlyViewed(product);
                     Navigator.pushNamed(
                       context,
                       Routes.productDetail,

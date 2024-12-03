@@ -8,10 +8,6 @@ class RecentlyViewedScreen extends StatefulWidget {
 
   @override
   State<RecentlyViewedScreen> createState() => _RecentlyViewedScreenState();
-
-
-  
-
 }
 
 class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
