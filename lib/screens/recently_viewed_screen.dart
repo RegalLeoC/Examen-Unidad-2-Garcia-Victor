@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
 import '../helpers/cart_helper.dart';
+import '../widgets/custom_navigation_bar.dart';
 
 class RecentlyViewedScreen extends StatefulWidget {
   const RecentlyViewedScreen({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class RecentlyViewedScreen extends StatefulWidget {
 
 class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
   List<Map<String, dynamic>> _recentlyViewed = [];
+  int _selectedIndex = 2; // Assuming Recently Viewed is the 3rd item
 
   @override
   void initState() {
@@ -44,6 +46,27 @@ class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
     }
   }
 
+  void _onNavItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/search');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/cart');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/recentlyViewed');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/userProfile');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +94,10 @@ class _RecentlyViewedScreenState extends State<RecentlyViewedScreen> {
                 );
               },
             ),
+      bottomNavigationBar: CustomNavigationBar(
+        currentIndex: _selectedIndex,
+        onDestinationSelected: _onNavItemTapped,
+      ),
     );
   }
 }

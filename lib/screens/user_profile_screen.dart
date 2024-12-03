@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/auth_helper.dart';
+import '../widgets/custom_navigation_bar.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   String? _username;
   String? _email;
+  int _selectedIndex = 3; // Assuming the profile is the 4th item
 
   @override
   void initState() {
@@ -30,6 +32,27 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<void> _logout() async {
     await AuthHelper.logout();
     Navigator.pushReplacementNamed(context, '/');
+  }
+
+  void _onNavItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/search');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/cart');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/recentlyViewed');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/userProfile');
+        break;
+    }
   }
 
   @override
@@ -59,6 +82,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomNavigationBar(
+        currentIndex: _selectedIndex,
+        onDestinationSelected: _onNavItemTapped,
       ),
     );
   }
